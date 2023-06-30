@@ -20,12 +20,7 @@ typedef struct
 } AppTime;
 
 AppTime * appTime;
-// Function to print the activity message with a 3-second delay
-void printWithDelay(const char *message)
-{
-	printf("%s\n", message);
-	usleep(3000000);	// Delay for 3 seconds
-}
+
 
 int timeFactor = 1;
 int responseAsked = 0;	//0 asked, 1: not asked
@@ -56,6 +51,18 @@ Activity activities[8] = {
 		"Evening leisure activities", 0, 0
 	}
 };
+void *print(void *vargp) {
+	usleep(3000000);	// Delay for 3 seconds
+	char *message = (char *)vargp;
+	printf("%s\n", message);
+	return NULL;
+}
+// Function to print the activity message with a 3-second delay
+void printWithDelay(const char *message)
+{
+	pthread_t printer_thread;
+	pthread_create(&printer_thread, NULL, print, (void*)message);
+}
 
 Activity* findForHour(int hour)
 {
@@ -138,7 +145,6 @@ void *backgroundRunner()
 		Activity * activity;
 		if (currentMinute == 0 && currentHour % 3 == 0)
 		{
-			printf("%d", currentHour);
 			activity = findForHour(currentHour);
 			if (activity->advised == 0) adviseActivity(activity);
 			activity->advised = 1;
