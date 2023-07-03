@@ -1,5 +1,3 @@
-﻿#include <wiringPi.h>
-
 
 #define NUM_CONNECTORS 3
 #define PINS_PER_CONNECTOR 6
